@@ -40,7 +40,11 @@
                                     <div class="card-body">
                                         <div class="form-group">
                                             <label for="category_id">Danh mục</label>
-                                            <input type="text" class="form-control" name="category_id" id="category_id" required>
+                                            <select class="form-control" name="category_id" id="category_id">
+                                                <?php foreach ($listDanhMuc as $category) { ?>
+                                                    <option value="<?= $category['category_id'] ?>"><?= $category['name'] ?></option>
+                                                <?php } ?>
+                                            </select>
                                         </div>
                                         <div class="form-group">
                                             <label for="title">Tên sách</label>
@@ -67,10 +71,10 @@
                                             <input type="date" class="form-control" name="published_date" id="published_date" required>
                                         </div>
                                         <div class="form-group">
-                                            <label for="image">Đường dẫn ảnh</label>
-                                            <input type="text" class="form-control" name="image" id="image" required>
-                                            <input type="file" class="form-control mt-2" name="file_upload">
+                                            <label for="file_upload">Chọn ảnh</label>
+                                            <input type="file" class="form-control" name="file_upload" id="file_upload" accept="image/*" required>
                                         </div>
+
                                     </div>
                                     <div class="card-footer">
                                         <a href="<?= BASE_URL_ADMIN . '?act=list-book' ?>" class="btn btn-secondary">Quay lại</a>

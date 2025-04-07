@@ -2,9 +2,12 @@
 
 class AdminDonHangControler{
     public $Order;
+    public $bookQuery;
     public function __construct()
         {
             $this->Order=new AdminDonHang();
+            $this->bookQuery = new BookQuery();
+
         }
     public function listDonHang()  {
         $listDonHang = $this->Order->getAllDonHang();
@@ -20,6 +23,7 @@ class AdminDonHangControler{
         // var_dump($DonHang);
         // die();
         $SanPhamDonHang=$this->Order->getProductDonHang($id);
+        // var_dump($SanPhamDonHang);die;
         
         if(isset($DonHang)){
             require_once  './view/order/detail.php';
@@ -80,6 +84,12 @@ class AdminDonHangControler{
             }
 
         }  
+    }
+    public function deleteDonHang()  {
+        $id=$_GET['id_order'];
+        $this->Order->deleteDonHang($id);
+        header('location:'. BASE_URL_ADMIN .'?act=list-order');
+        exit();
     }
     
     

@@ -22,7 +22,9 @@ require_once __DIR__ . '/../views/layout/header.php';
                 <?php foreach ($books as $book): ?>
                     <div class="book-card">
                         <div class="book-image">
-                            <img src="<?php echo htmlspecialchars($book['image']); ?>" alt="<?php echo htmlspecialchars($book['title']); ?>">
+                        <img src="<?= BASE_URL_ADMIN . htmlspecialchars($book['image']); ?>"
+                        alt="<?= htmlspecialchars($book['title']); ?>"
+                        class="">
                             <div class="book-actions">
                                 <a href="#" class="action-btn"><i class="fas fa-heart"></i></a>
                                 <a href="<?= BASE_URL ?>index.php?controller=Home&action=productDetail&book_id=<?= $book['book_id'] ?>" class="action-btn"><i class="fas fa-eye"></i></a>

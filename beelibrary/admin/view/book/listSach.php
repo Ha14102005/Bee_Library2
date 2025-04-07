@@ -55,10 +55,10 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php foreach ($bookList as $book) { ?>
+                                            <?php foreach ($bookList as $key => $book) { ?>
                                                 <tr>
-                                                    <td><?= $book->book_id ?></td>
-                                                    <td><?= $book->category_id ?></td>
+                                                    <td><?= $key+1?></td>
+                                                    <td><?= $book->category_name ?></td>
                                                     <td><?= $book->title ?></td>
                                                     <td><?= $book->author ?></td>
                                                     <td class="description">
@@ -72,7 +72,7 @@
                                                     <td><?= $book->price ?></td>
                                                     <td>
                                                         <div style="height: 60px; width: 60px;">
-                                                            <img style="max-height: 100%; max-width: 100%;" src="<?= IMG_ROOT . $book->image ?>" alt="">
+                                                            <img style="max-height: 100%; max-width: 100%;" src="<?= BASE_URL_ADMIN . $book->image ?>" alt="">
                                                         </div>
                                                     </td>
                                                     <td><?= $book->stock ?></td>

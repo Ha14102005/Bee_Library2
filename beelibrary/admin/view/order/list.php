@@ -88,7 +88,14 @@
                                                                             <i class="fas fa-eye"></i>
                                                                         </button>
                                                                     </a>
+                                                                    <?php if ($donhang['status_id'] == 7): ?>
+                                                                        <a href="<?= BASE_URL_ADMIN . '?act=delete-order&id_order=' . $donhang['order_id'] ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa không?')">
+                                                                            <button class='btn btn-danger' style="height:40px; width:40px" >
 
+                                                                                <i class="fas fa-trash"></i>
+                                                                            </button>
+                                                                        </a>
+                                                                  <?php endif  ?> 
                                                                     <a href="<?= BASE_URL_ADMIN . '?act=form-edit-order&id_order=' . $donhang['order_id'] ?>">
                                                                         <button class='btn btn-primary'>
                                                                         <i class="fas fa-wrench fa-sm" style="color: #ffffff;"></i>

@@ -39,11 +39,12 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <img src="<?= IMG_ROOT . $book->image ?>" alt="<?= $book->title ?>" class="img-fluid" style="max-width: 100%; height: auto;">
+                                            <img src="<?= BASE_URL_ADMIN . $book->image ?>" alt="<?= $book->title ?>" class="img-fluid" style="max-width: 100%; height: auto;">
                                         </div>
                                         <div class="col-md-6">
                                             <h3><?= $book->title ?></h3>
-                                            <p><strong>Danh mục:</strong> <?= $book->category_id ?></p>
+                                            <p><strong>Danh mục:</strong> <?= $book->category_name; // ✅ Thêm thuộc tính này
+ ?></p>
                                             <p><strong>Tác giả:</strong> <?= $book->author ?></p>
                                             <p><strong>Giá:</strong> <?= $book->price ?> <sup>₫</sup></p>
                                             <p><strong>Số lượng còn:</strong> <?= $book->stock ?></p>

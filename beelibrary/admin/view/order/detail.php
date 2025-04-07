@@ -62,7 +62,7 @@
                                     <div class="col-12">
                                         <h4>
                                             <i class="fas fa-laptop"></i></i> Shop bán Laptop uy tín nhất HN
-                                            <small class="float-right">Ngày đặt: <?=$DonHang['order_date'] ?></small>
+                                            <small class="float-right">Ngày đặt: <?= $DonHang['order_date'] ?></small>
                                         </h4>
                                     </div>
                                     <!-- /.col -->
@@ -72,27 +72,27 @@
                                     <div class="col-sm-4 invoice-col">
                                         Thông tin người đặt
                                         <address>
-                                            <strong><?=$DonHang['username']?></strong><br>
-                                            Email: <?=$DonHang['email']?><br>
-                                            Phone: <?=$DonHang['phone']?><br>
+                                            <strong><?= $DonHang['username'] ?></strong><br>
+                                            Email: <?= $DonHang['email'] ?><br>
+                                            Phone: <?= $DonHang['phone'] ?><br>
                                         </address>
                                     </div>
                                     <!-- /.col -->
                                     <div class="col-sm-4 invoice-col">
                                         Thông tin người nhận
                                         <address>
-                                            <strong><?=$DonHang['recipient_name']?></strong><br>
-                                            Địa chỉ: <?=$DonHang['recipient_address']?><br>
-                                            Phone: <?=$DonHang['recipient_phone']?><br>
-                                            Email: <?=$DonHang['recipient_email']?>
+                                            <strong><?= $DonHang['recipient_name'] ?></strong><br>
+                                            Địa chỉ: <?= $DonHang['recipient_address'] ?><br>
+                                            Phone: <?= $DonHang['recipient_phone'] ?><br>
+                                            Email: <?= $DonHang['recipient_email'] ?>
                                         </address>
                                     </div>
                                     <!-- /.col -->
                                     <div class="col-sm-4 invoice-col">
-                                        <b>Mã đơn hàng #<?=$DonHang['order_code']?></b><br>
+                                        <b>Mã đơn hàng #<?= $DonHang['order_code'] ?></b><br>
                                         <br>
-                                        <b>Đơn hàng ID:</b> <?=$DonHang['order_id']?><br>
-                                        <b>Tổnh tiền:</b> <?=$DonHang['total_amount']?> <sup>₫</sup><br>
+                                        <b>Đơn hàng ID:</b> <?= $DonHang['order_id'] ?><br>
+                                        <b>Tổnh tiền:</b> <?= $DonHang['total_amount'] ?> <sup>₫</sup><br>
                                         <b>Thanh toán:</b> 968-34567
                                     </div>
                                     <!-- /.col -->
@@ -107,24 +107,26 @@
                                                 <tr>
                                                     <th>#</th>
                                                     <th>Tên sản phẩm</th>
+                                                    <th>Ảnh</th>
                                                     <th>Đơn giá</th>
                                                     <th>Số lượng</th>
-                                                    <th>Thành tiền</th>   
+                                                    <th>Thành tiền</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <?php
-                                                $tongtien=0;
-                                                 foreach($SanPhamDonHang as $key=>$sanpham):?>
-                                                <tr>
-                                                    <td><?=$key + 1?></td>
-                                                    <td><?=$sanpham['name']?></td>
-                                                    <td><?=$sanpham['price']?><sup>đ</sup></td>
-                                                    <td><?=$sanpham['quantity']?></td>
-                                                    <td><?=$sanpham['total_price']?><sup>đ</sup></td>
-                                                    <?php $tongtien+=$sanpham['total_price']?>
-                                                </tr>
-                                                <?php endforeach?>
+                                                $tongtien = 0;
+                                                foreach ($SanPhamDonHang as $key => $sanpham): ?>
+                                                    <tr>
+                                                        <td><?= $key + 1 ?></td>
+                                                        <td><?= $sanpham['title'] ?></td> <!-- Sửa 'tilte' thành 'title' -->
+                                                        <td><img src="<?= isset($sanpham['image']) ? './'. $sanpham['image'] : './assets/img/no-image.png' ?>" style="width:100px"></td>
+                                                        <td><?= $sanpham['price'] ?><sup>đ</sup></td>
+                                                        <td><?= $sanpham['quantity'] ?></td> <!-- Giả sử cột đúng là 'quantity' không phải 'stock' -->
+                                                        <td><?= $sanpham['price'] * $sanpham['quantity'] ?><sup>đ</sup></td> <!-- Nếu không có 'total_price', tính bằng price * quantity -->
+                                                        <?php $tongtien += ($sanpham['price'] * $sanpham['quantity']) ?>
+                                                    </tr>
+                                                <?php endforeach ?>
                                             </tbody>
                                         </table>
                                     </div>
@@ -133,25 +135,25 @@
                                 <!-- /.row -->
 
                                 <div class="row">
-                                    
+
                                     <!-- /.col -->
                                     <div class="col-12">
-                                        <p class="lead">Ngày đặt: <?=$DonHang['order_date'] ?></p>
+                                        <p class="lead">Ngày đặt: <?= $DonHang['order_date'] ?></p>
 
                                         <div class="table-responsive">
                                             <table class="table">
                                                 <tr>
                                                     <th style="width:50%">Thành tiền:</th>
-                                                    <td><?=$tongtien?><sup>đ</sup></td>
+                                                    <td><?= $tongtien ?><sup>đ</sup></td>
                                                 </tr>
-                                                
+
                                                 <tr>
                                                     <th>Vận chuyển:</th>
                                                     <td>100000 <sup>đ</sup></td>
                                                 </tr>
                                                 <tr>
                                                     <th>Tổng:</th>
-                                                    <td><?= $tongtien+100000 ?><sup>đ</sup></td>
+                                                    <td><?= $tongtien + 100000 ?><sup>đ</sup></td>
                                                 </tr>
                                             </table>
                                         </div>

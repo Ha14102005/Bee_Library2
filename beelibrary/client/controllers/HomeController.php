@@ -17,33 +17,37 @@ class HomeController {
         require_once dirname(__DIR__, 2) . '/client/views/home.php';
     }
 
+
     public function productDetail() {
         $book_id = isset($_GET['book_id']) ? (int)$_GET['book_id'] : 0;
-
+    
         if ($book_id <= 0) {
             die("Invalid book ID");
         }
-
+    
         $bookQuery = "SELECT book_id, title, author, description, price, stock, image, published_date 
                       FROM books 
                       WHERE book_id = :book_id";
-        $reviewQuery = "SELECT r.review_id, r.rating, r.comment, r.review_date 
+        $reviewQuery = "SELECT r.review_id, r.rating, r.comment, r.review_date, u.username AS user_name 
                         FROM reviews r 
                         JOIN users u ON r.user_id = u.user_id 
                         WHERE r.book_id = :book_id 
                         ORDER BY r.review_date DESC";
-
+    
         try {
             $db = connectDB();
+            
+            // Lấy thông tin sách
             $bookStmt = $db->prepare($bookQuery);
             $bookStmt->bindValue(':book_id', $book_id, PDO::PARAM_INT);
             $bookStmt->execute();
             $book = $bookStmt->fetch(PDO::FETCH_ASSOC);
-
+    
             if (!$book) {
                 die("Book not found");
             }
-
+    
+            // Lấy danh sách bình luận
             $reviewStmt = $db->prepare($reviewQuery);
             $reviewStmt->bindValue(':book_id', $book_id, PDO::PARAM_INT);
             $reviewStmt->execute();
@@ -51,7 +55,8 @@ class HomeController {
         } catch (PDOException $e) {
             die("Database error: " . $e->getMessage());
         }
-
+    
+        // Truyền dữ liệu vào view
         require_once dirname(__DIR__, 2) . '/client/views/product_detail.php';
     }
 }

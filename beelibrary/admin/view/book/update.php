@@ -40,8 +40,11 @@
                                     <div class="card-body">
                                         <div class="form-group">
                                             <label for="category_id">Danh mục</label>
-                                            <input type="text" class="form-control" name="category_id" id="category_id" value="<?= htmlspecialchars($book->category_id) ?>" required>
-                                        </div>
+                                            <select class="form-control" name="category_id" id="category_id">
+                                                <?php foreach ($listDanhMuc as $category) { ?>
+                                                    <option   value="<?= $category['category_id'] ?>"><?= $category['name'] ?></option>
+                                                <?php } ?>
+                                            </select>                                        </div>
                                         <div class="form-group">
                                             <label for="title">Tên sách</label>
                                             <input type="text" class="form-control" name="title" id="title" value="<?= htmlspecialchars($book->title) ?>" required>
@@ -68,9 +71,8 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="image">Hình ảnh</label>
-                                            <input type="text" class="form-control" name="image" id="image" value="<?= htmlspecialchars($book->image) ?>" required>
                                             <input type="file" class="form-control mt-2" name="file_upload">
-                                            <small class="form-text text-muted">Ảnh hiện tại: <?= htmlspecialchars($book->image) ?></small>
+                                            <small class="form-text text-muted">Ảnh hiện tại: <img src="<?= $book->image ?>" alt="" style="width:100px"></small>
                                         </div>
                                     </div>
                                     <div class="card-footer">

@@ -2,19 +2,22 @@
 require_once dirname(__DIR__, 2) . '/commons/env.php';
 require_once dirname(__DIR__, 2) . '/commons/function.php';
 
-class Order {
+class Order
+{
     private $db;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = connectDB();
     }
 
     // Tạo đơn hàng mới
-    public function createOrder($user_id, $recipient_name, $recipient_email, $recipient_phone, $recipient_address, $payment_method_id) {
+    public function createOrder($user_id, $recipient_name, $recipient_email, $recipient_phone, $recipient_address, $payment_method_id)
+    {
         $order_code = uniqid('ORD_'); // Tạo mã đơn hàng duy nhất
         $query = "INSERT INTO orders (order_code, user_id, recipient_name, recipient_email, recipient_phone, recipient_address, order_date, total_amount, payment_method_id, status_id)
                   VALUES (:order_code, :user_id, :recipient_name, :recipient_email, :recipient_phone, :recipient_address, NOW(), 0, :payment_method_id, 1)";
-        
+
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':order_code', $order_code);
         $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
@@ -23,7 +26,7 @@ class Order {
         $stmt->bindValue(':recipient_phone', $recipient_phone);
         $stmt->bindValue(':recipient_address', $recipient_address);
         $stmt->bindValue(':payment_method_id', $payment_method_id, PDO::PARAM_INT);
-        
+
         if ($stmt->execute()) {
             return $this->db->lastInsertId();
         }
@@ -31,12 +34,13 @@ class Order {
     }
 
     // Thêm sản phẩm vào đơn hàng
-    public function addItemsToOrder($order_id, $cart_id) {
+    public function addItemsToOrder($order_id, $cart_id)
+    {
         $query = "INSERT INTO order_items (order_id, book_id, quantity, price)
                   SELECT :order_id, ci.book_id, ci.quantity, ci.price
                   FROM cart_item ci
                   WHERE ci.cart_id = :cart_id";
-        
+
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':order_id', $order_id, PDO::PARAM_INT);
         $stmt->bindValue(':cart_id', $cart_id, PDO::PARAM_INT);
@@ -46,14 +50,15 @@ class Order {
         $updateQuery = "UPDATE orders SET total_amount = 
                         (SELECT SUM(quantity * price) FROM order_items WHERE order_id = :order_id)
                         WHERE order_id = :order_id";
-        
+
         $updateStmt = $this->db->prepare($updateQuery);
         $updateStmt->bindValue(':order_id', $order_id, PDO::PARAM_INT);
         $updateStmt->execute();
     }
 
     // Lấy thông tin đơn hàng theo ID
-    public function getOrderById($order_id) {
+    public function getOrderById($order_id)
+    {
         $query = "SELECT * FROM orders WHERE order_id = :order_id";
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':order_id', $order_id, PDO::PARAM_INT);
@@ -62,12 +67,13 @@ class Order {
     }
 
     // Lấy danh sách sản phẩm trong đơn hàng
-    public function getOrderItems($order_id) {
-        $query = "SELECT oi.book_id, p.title, oi.quantity, oi.price, (oi.quantity * oi.price) AS total_price
+    public function getOrderItems($order_id)
+    {
+        $query = "SELECT oi.book_id, p.title, p.image, oi.quantity, oi.price, (oi.quantity * oi.price) AS total_price
                   FROM order_items oi
                   JOIN books p ON oi.book_id = p.book_id
                   WHERE oi.order_id = :order_id";
-        
+
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':order_id', $order_id, PDO::PARAM_INT);
         $stmt->execute();
@@ -75,9 +81,10 @@ class Order {
     }
 
     // Cập nhật trạng thái đơn hàng
-    public function updateOrderStatus($order_id, $status_id) {
+    public function updateOrderStatus($order_id, $status_id)
+    {
         $query = "UPDATE orders SET status_id = :status_id WHERE order_id = :order_id";
-        
+
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':order_id', $order_id, PDO::PARAM_INT);
         $stmt->bindValue(':status_id', $status_id, PDO::PARAM_INT);
@@ -85,10 +92,25 @@ class Order {
     }
 
     // Lấy danh sách trạng thái đơn hàng
-    public function getOrderStatusList() {
+    public function getOrderStatusList()
+    {
         $query = "SELECT * FROM order_status";
         $stmt = $this->db->query($query);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    // Trong Order.php
+    public function getOrdersByUserId($user_id)
+    {
+        $query = "SELECT o.order_id, o.order_code, o.order_date, o.total_amount, o.status_id, os.status_name
+              FROM orders o
+              JOIN order_status os ON o.status_id = os.status_id
+              WHERE o.user_id = :user_id
+              ORDER BY o.order_date DESC";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
-?>

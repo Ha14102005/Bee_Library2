@@ -69,24 +69,28 @@ class AuthController
     public function login()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $email = $_POST['email'] ?? '';
-            $password = $_POST['password'] ?? '';
-
-            if (empty($email) || empty($password)) {
-                $_SESSION["error"] = "Email và mật khẩu là bắt buộc!";
-                header("Location: " . BASE_URL_ADMIN . "?act=login-admin");
-                exit();
-            }
-
+            $email = $_POST['email'];
+            $password = $_POST['password'];
+    
+            // Gọi model để kiểm tra đăng nhập
             $user = $this->modelAdmin->checkLogin($email, $password);
-
-            if ($user) {
+            // var_dump($user);die;
+    
+            // Kiểm tra đăng nhập thành công
+            if ($user && isset($user['email']) && $user['email'] === $email) { 
+                // Lưu thông tin user vào session
                 $_SESSION['user_admin'] = $user;
-                header("Location: " . BASE_URL_ADMIN);
+                // var_dump($_SESSION); die(); // Kiểm tra session có lưu không
+                // Chuyển hướng về trang admin
+                header("Location: " . BASE_URL_ADMIN . '?act=list-book' );
                 exit();
             } else {
-                $_SESSION["error"] = "Email hoặc mật khẩu không đúng!";
-                header("Location: " . BASE_URL_ADMIN . "?act=login-admin");
+                // Đăng nhập thất bại -> Lưu thông báo lỗi vào session
+                $_SESSION['error'] = "Sai email hoặc mật khẩu!";
+                $_SESSION['flash'] = true;
+    
+                // Quay lại trang đăng nhập
+                header("Location: " . BASE_URL_ADMIN . '?act=login-admin');
                 exit();
             }
         }
@@ -142,5 +146,43 @@ class AuthController
         }
         header("Location: " . BASE_URL_ADMIN . "?act=list-tai-khoan-quan-tri");
         exit();
+
+
+    }
+    
+    // Hiển thị form cập nhật tài khoản quản trị viên
+    public function formUpdateQuanTri()
+    {
+        $id = $_GET['id'] ?? null;
+      
+    
+        $quanTri = $this->modelAdmin->getQuanTriById($id);
+        
+    
+        require_once './view/user/quantri/editQuanTri.php';
+    }
+    
+    // Xử lý cập nhật tài khoản quản trị viên
+    public function postUpdateQuanTri()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_POST['user_id'] ?? null;
+            $username = $_POST['username'] ?? '';
+            $email  = $_POST['email'] ?? '';
+            $phone = $_POST['phone'] ?? '';
+            $role = $_POST['role'] ?? 'admin';
+    
+    
+            $result = $this->modelAdmin->updateQuanTriById($id, $username, $email, $phone, $role);
+    
+            if ($result) {
+                $_SESSION['success'] = "Cập nhật tài khoản quản trị viên thành công.";
+                header("Location: " . BASE_URL_ADMIN . "?act=list-tai-khoan-quan-tri");
+            } else {
+                $_SESSION['error'] = "Cập nhật tài khoản thất bại. Email hoặc username có thể đã tồn tại.";
+                header("Location: " . BASE_URL_ADMIN . "?act=form-sua-quan-tri&id=" . $id);
+            }
+            exit();
+        }
     }
 }

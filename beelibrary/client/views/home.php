@@ -14,39 +14,46 @@ require_once __DIR__ . '/../views/layout/header.php';
 </head>
 
 <body>
-<div class="container">
-    <!-- Danh sách sách -->
-    <div class="products-grid">
-        <?php if (!empty($books)): ?>
-            <?php foreach ($books as $book): ?>
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="<?= htmlspecialchars($book['image']); ?>" alt="<?= htmlspecialchars($book['title']); ?>">
-                        <div class="product-actions">
-                            <a href="#" class="action-btn"><i class="fas fa-heart"></i></a>
-                            <a href="<?= BASE_URL ?>index.php?controller=Home&action=productDetail&book_id=<?= $book['book_id'] ?>" class="action-btn"><i class="fas fa-eye"></i></a>
-                            <a href="<?= BASE_URL ?>index.php?controller=Cart&action=addToCart&book_id=<?= $book['book_id'] ?>&quantity=1" class="action-btn">
-                                <i class="fas fa-shopping-cart"></i>
-                            </a>
+    <div class="container">
+        <!-- Danh sách sách -->
+        <div class="products-grid">
+            <?php if (!empty($books)): ?>
+                <?php foreach ($books as $book): ?>
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="<?= BASE_URL_ADMIN . htmlspecialchars($book['image']); ?>" alt="<?= htmlspecialchars($book['title']); ?>">
+                            <div class="product-actions">
+                                <a href="#" class="action-btn"><i class="fas fa-heart"></i></a>
+                                <a href="<?= BASE_URL ?>index.php?controller=Home&action=productDetail&book_id=<?= $book['book_id'] ?>" class="action-btn"><i class="fas fa-eye"></i></a>
+                                <a href="<?php if (isset($_SESSION['user_id'])): ?>
+                                        <?= BASE_URL ?>index.php?controller=Cart&action=addToCart&book_id=<?= $book['book_id'] ?>&quantity=1
+                                    <?php else: ?>
+                                        <?= BASE_URL ?>client/views/login.php
+                                    <?php endif; ?>" class="action-btn"
+                                    <?php if (!isset($_SESSION['user_id'])): ?>
+                                    onclick="alert('Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!');"
+                                    <?php endif; ?>>
+                                    <i class="fas fa-shopping-cart"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h2 class="product-name"><?= htmlspecialchars($book['title']); ?></h2>
+                            <p class="product-author">Tác giả: <?= htmlspecialchars($book['author']); ?></p>
+                            <p class="product-price">
+                                <?= number_format($book['price'], 0, ',', '.') ?> VNĐ
+                            </p>
+                            <p class="product-stock">
+                                <?= $book['stock'] > 0 ? $book['stock'] . ' sản phẩm còn lại' : 'Hết hàng'; ?>
+                            </p>
                         </div>
                     </div>
-                    <div class="product-info">
-                        <h2 class="product-name"><?= htmlspecialchars($book['title']); ?></h2>
-                        <p class="product-author">Tác giả: <?= htmlspecialchars($book['author']); ?></p>
-                        <p class="product-price">
-                            <?= number_format($book['price'], 0, ',', '.') ?> VNĐ
-                        </p>
-                        <p class="product-stock">
-                            <?= $book['stock'] > 0 ? $book['stock'] . ' sản phẩm còn lại' : 'Hết hàng'; ?>
-                        </p>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p>Không có sách nào.</p>
-        <?php endif; ?>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>Không có sách nào.</p>
+            <?php endif; ?>
+        </div>
     </div>
-</div>
 </body>
 
 </html>

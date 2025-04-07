@@ -20,7 +20,7 @@ require_once __DIR__ . '/../views/layout/header.php';
             <div class="product-container">
                 <!-- Hình ảnh sách -->
                 <div class="product-image">
-                    <img src="<?= htmlspecialchars($book['image']); ?>"
+                    <img src="<?= BASE_URL_ADMIN . htmlspecialchars($book['image']); ?>"
                         alt="<?= htmlspecialchars($book['title']); ?>"
                         class="img-fluid">
                 </div>
@@ -35,11 +35,15 @@ require_once __DIR__ . '/../views/layout/header.php';
                     <p><strong>Ngày nhập sách:</strong> <?= $book['published_date']; ?></p>
 
                     <!-- Form thêm vào giỏ hàng -->
-                    <form action="<?= BASE_URL ?>client/controllers/CartController.php" method="POST">
-                        <input type="hidden" name="book_id" value="<?= $book['book_id']; ?>">
-                        <button type="submit" name="add_to_cart" class="btn btn-primary">Thêm vào giỏ hàng</button>
-                        <button type="submit" name="buy_now" class="btn btn-danger">Mua ngay </button>
-                    </form>
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <form action="<?= BASE_URL ?>index.php?controller=Cart&action=addToCart&book_id=<?= $book['book_id'] ?>&quantity=1" method="POST">
+                            <input type="hidden" name="book_id" value="<?= $book['book_id']; ?>">
+                            <button type="submit" name="add_to_cart" class="btn btn-primary">Thêm vào giỏ hàng</button>
+                            <button type="submit" name="buy_now" class="btn btn-danger">Mua ngay</button>
+                        </form>
+                    <?php else: ?>
+                        <p>Bạn cần <a href="<?= BASE_URL ?>client/views/login.php">đăng nhập</a> để thêm sản phẩm vào giỏ hàng.</p>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -47,34 +51,47 @@ require_once __DIR__ . '/../views/layout/header.php';
         <!-- Container riêng cho phần đánh giá -->
         <div class="container reviews-container">
             <!-- Phần đánh giá -->
-            <div class="reviews">
-                <h3>Đánh giá sản phẩm</h3>
-                <?php if (!empty($reviews)): ?>
-                    <?php foreach ($reviews as $review): ?>
-                        <div class="review-item">
-                            <p><strong><?= htmlspecialchars($review['full_name']); ?></strong>
-                                (<?= $review['rating']; ?>/5) - <?= $review['review_date']; ?></p>
-                            <p><?= nl2br(htmlspecialchars($review['comment'])); ?></p>
-                        </div>
-                        <hr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p>Chưa có đánh giá nào cho sản phẩm này.</p>
-                <?php endif; ?>
-
-                <!-- Form thêm đánh giá -->
+            <div class="reviews-section">
+                <h3>Đánh giá và bình luận</h3>
                 <?php if (isset($_SESSION['user_id'])): ?>
-                    <form action="<?= BASE_URL ?>client/controllers/HomeController.php" method="POST">
-                        <input type="hidden" name="book_id" value="<?= $book['book_id']; ?>">
+                    <form action="<?= BASE_URL ?>index.php?controller=Review&action=addReview" method="POST">
+                        <input type="hidden" name="book_id" value="<?= htmlspecialchars($book['book_id']) ?>">
                         <div class="form-group">
-                            <label for="comment">Nhận xét:</label>
-                            <textarea name="comment" id="comment" class="form-control" rows="3" required></textarea>
+                            <label for="rating">Đánh giá (số sao):</label>
+                            <select name="rating" id="rating" required>
+                                <option value="5">5 sao</option>
+                                <option value="4">4 sao</option>
+                                <option value="3">3 sao</option>
+                                <option value="2">2 sao</option>
+                                <option value="1">1 sao</option>
+                            </select>
                         </div>
-                        <button type="submit" name="submit_review" class="btn btn-success">Gửi đánh giá</button>
+                        <div class="form-group">
+                            <label for="comment">Bình luận:</label>
+                            <textarea name="comment" id="comment" rows="4" placeholder="Nhập bình luận của bạn..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Gửi bình luận</button>
                     </form>
                 <?php else: ?>
-                    <p>Vui lòng <a href="<?= BASE_URL ?>client/views/login.php">đăng nhập</a> để thêm đánh giá.</p>
+                    <p>Bạn cần <a href="<?= BASE_URL ?>client/views/login.php">đăng nhập</a> để bình luận.</p>
                 <?php endif; ?>
+
+                <div class="reviews-list">
+                    <h4>Các bình luận:</h4>
+                    <?php if (!empty($reviews)): ?>
+                        <?php foreach ($reviews as $review): ?>
+                            <div class="review">
+                                <p><strong><?= htmlspecialchars($review['user_name']) ?>:</strong>
+                                    <span class="rating"><?= str_repeat('⭐', $review['rating']) ?></span>
+                                </p>
+                                <p><?= htmlspecialchars($review['comment']) ?></p>
+                                <p class="review-date"><?= htmlspecialchars($review['review_date']) ?></p>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p>Chưa có bình luận nào.</p>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
     </div>

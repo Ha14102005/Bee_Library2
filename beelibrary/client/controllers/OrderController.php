@@ -74,5 +74,17 @@ class OrderController {
 
         require_once dirname(__DIR__, 2) . '/client/views/order.php';
     }
+    // Trong OrderController.php
+public function viewAllOrders() {
+    if (!isset($_SESSION['user_id'])) {
+        header("Location: " . BASE_URL . "index.php?controller=User&action=login");
+        exit();
+    }
+
+    $user_id = $_SESSION['user_id'];
+    $orders = $this->orderModel->getOrdersByUserId($user_id);
+
+    require_once dirname(__DIR__, 2) . '/client/views/all_order.php';
+}
 }
 ?>

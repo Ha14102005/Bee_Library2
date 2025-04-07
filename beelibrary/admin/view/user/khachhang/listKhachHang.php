@@ -38,7 +38,7 @@
                                                 <th>Email</th>
                                                 <th>Ngày tạo</th>
                                                 <th>Chức vụ</th>
-                                                <th>Hành động</th>
+                                                <!-- <th>Hành động</th> -->
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -64,13 +64,13 @@
                                                             ?>
                                                         </td>
                                                         <td><?= htmlspecialchars($user['role'] ?? 'N/A') ?></td>
-                                                        <td>
+                                                        <!-- <td>
                                                             <a href="<?= BASE_URL_ADMIN . '?act=delete-khach-hang&id=' . htmlspecialchars($user['user_id']) ?>"
                                                                class="btn btn-danger"
                                                                onclick="return confirm('Bạn có chắc chắn muốn xóa tài khoản này?');">
                                                                 <i class="fas fa-trash-alt"></i> Xóa
                                                             </a>
-                                                        </td>
+                                                        </td> -->
                                                     </tr>
                                                 <?php } ?>
                                             <?php } ?>

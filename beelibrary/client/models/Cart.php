@@ -35,10 +35,11 @@ class Cart {
     }
 
     public function getCartItemsByUserId($user_id) {
-        $query = "SELECT ci.book_id, p.title, p.image, ci.quantity, ci.price FROM cart_item ci
-                  JOIN cart c ON ci.cart_id = c.cart_id
-                  JOIN books p ON ci.book_id = p.book_id
-                  WHERE c.user_id = :user_id AND c.status = 'pending'";
+        $query = "SELECT ci.id, ci.book_id, p.title, p.image, ci.quantity, ci.price FROM cart_item ci
+          JOIN cart c ON ci.cart_id = c.cart_id
+          JOIN books p ON ci.book_id = p.book_id
+          WHERE c.user_id = :user_id AND c.status = 'pending'";
+
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':user_id', $user_id);
         $stmt->execute();
@@ -51,5 +52,20 @@ class Cart {
         $stmt->bindValue(':cart_id', $cart_id);
         $stmt->execute();
     }
+    public function removeItemFromCart($cart_item_id) {
+        $query = "DELETE FROM cart_item WHERE id = :cart_item_id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':cart_item_id', $cart_item_id);
+        $stmt->execute();
+    }
+
+    public function updateCartItemQuantity($cart_item_id, $quantity) {
+        $query = "UPDATE cart_item SET quantity = :quantity WHERE id = :cart_item_id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':cart_item_id', $cart_item_id);
+        $stmt->bindValue(':quantity', $quantity);
+        $stmt->execute();
+    }
+    
 }
 ?>

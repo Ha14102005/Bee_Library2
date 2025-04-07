@@ -233,3 +233,18 @@ body {
 .cart-info:hover {
     background: #e04344;
 }
+.order-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #ff4d4f;
+    padding: 10px 15px;
+    border-radius: 5px;
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.order-info:hover {
+    background: #e04344;
+}

@@ -3,15 +3,16 @@
 class BookController
 {
     public $bookQuery;
-    
+    public $Category;
+
+
     public function __construct()
     {
         $this->bookQuery = new BookQuery();
+        $this->Category = new AdminDanhMuc();
     }
 
-    public function __destruct()
-    {
-    }
+    public function __destruct() {}
 
     public function showList()
     {
@@ -24,6 +25,8 @@ class BookController
         $book = new Book();
         $thongBaoLoi = "";
         $thongBaoThanhCong = "";
+        $listDanhMuc = $this->Category->getAllDanhMuc();
+
 
         if (isset($_POST["submitForm"])) {
             $book->category_id = trim($_POST["category_id"]);
@@ -38,23 +41,38 @@ class BookController
                 $thongBaoLoi = "Hãy nhập đầy đủ thông tin";
             }
 
+            // Xử lý upload file
             if (!empty($_FILES["file_upload"]["tmp_name"])) {
-                $thamSo1 = $_FILES["file_upload"]["tmp_name"];
-                $thamSo2 = "../upload/" . $_FILES["file_upload"]["name"];
+                $uploadDir = __DIR__ . "/../upload/"; // Lùi một cấp ra khỏi controller để đến admin/upload/
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
 
-                if (move_uploaded_file($thamSo1, $thamSo2)) {
-                    $book->image = "upload/" . $_FILES["file_upload"]["name"];
+                $fileName = basename($_FILES["file_upload"]["name"]);
+                $filePath = $uploadDir . $fileName;
+
+                // Kiểm tra định dạng file hợp lệ
+                $allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+                $fileType = mime_content_type($_FILES["file_upload"]["tmp_name"]);
+
+                if (!in_array($fileType, $allowedTypes)) {
+                    $thongBaoLoi = "Chỉ cho phép tải lên file ảnh (JPG, PNG, GIF)";
                 } else {
-                    $thongBaoLoi = "Kết nối file thất bại";
+                    if (move_uploaded_file($_FILES["file_upload"]["tmp_name"], $filePath)) {
+                        $book->image = "upload/" . $fileName;
+                    } else {
+                        $thongBaoLoi = "Kết nối file thất bại";
+                    }
                 }
             }
+           
 
             if ($thongBaoLoi === "") {
                 $dataCreate = $this->bookQuery->insert($book);
 
                 if ($dataCreate === "ok") {
-                    $thongBaoThanhCong = "Tạo mới thành công. Mời tiếp tục tạo mới hoặc quay lại trang danh sách";
-                    $book = new Book();
+                    header("Location: ?act=list-book");
+                    exit();
                 }
             }
         }
@@ -77,6 +95,8 @@ class BookController
             $book = $this->bookQuery->find($id);
             $thongBaoLoi = "";
             $thongBaoThanhCong = "";
+            $listDanhMuc = $this->Category->getAllDanhMuc();
+
 
             if (isset($_POST["submitForm"])) {
                 $book->title = trim($_POST["title"]);
@@ -85,17 +105,42 @@ class BookController
                 $book->price = trim($_POST["price"]);
                 $book->stock = trim($_POST["stock"]);
                 $book->published_date = trim($_POST["published_date"]);
+                $oldImage = $_POST["image"] ?? ""; // Nếu không có ảnh cũ, gán chuỗi rỗng
+
 
                 if (isset($_FILES["file_upload"]) && $_FILES["file_upload"]["error"] === UPLOAD_ERR_OK) {
-                    $thamSo1 = $_FILES["file_upload"]["tmp_name"];
-                    $thamSo2 = "../upload/" . $_FILES["file_upload"]["name"];
+                    $uploadDir = __DIR__ . "/../upload/"; // Lưu vào thư mục admin/upload/
 
-                    if (move_uploaded_file($thamSo1, $thamSo2)) {
-                        $book->image = "upload/" . $_FILES["file_upload"]["name"];
-                    } else {
-                        $thongBaoLoi = "Kết nối file thất bại";
+                    if (!is_dir($uploadDir)) {
+                        mkdir($uploadDir, 0777, true); // Tạo thư mục nếu chưa có
                     }
+
+                    $fileName = basename($_FILES["file_upload"]["name"]);
+                    $filePath = $uploadDir . $fileName;
+
+                    // Kiểm tra định dạng file hợp lệ
+                    $allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+                    $fileType = mime_content_type($_FILES["file_upload"]["tmp_name"]);
+
+                    if (!in_array($fileType, $allowedTypes)) {
+                        $thongBaoLoi = "Chỉ cho phép tải lên file ảnh (JPG, PNG, GIF)";
+                    } else {
+                        if (move_uploaded_file($_FILES["file_upload"]["tmp_name"], $filePath)) {
+                            // Nếu upload thành công, cập nhật ảnh mới
+                            $book->image = "upload/" . $fileName;
+                            // Nếu có ảnh cũ, xóa ảnh cũ để tránh rác
+                            if (!empty($oldImage) && file_exists(__DIR__ . "/../" . $oldImage)) {
+                                unlink(__DIR__ . "/../" . $oldImage);
+                            }
+                        } else {
+                            $thongBaoLoi = "Lưu file thất bại.";
+                        }
+                    }
+                } else {
+                    // Nếu không có ảnh mới, giữ nguyên ảnh cũ
+                    $book->image = $oldImage;
                 }
+
 
                 if ($book->title === "" || $book->author === "" || $book->description === "" || $book->price === "" || $book->stock === "" || $book->published_date === "") {
                     $thongBaoLoi = "Tiêu đề, Tác giả, Giá, và Ngày xuất bản là bắt buộc. Hãy nhập đầy đủ.";
@@ -105,7 +150,8 @@ class BookController
                     $dataUpdate = $this->bookQuery->update($id, $book);
 
                     if ($dataUpdate) {
-                        $thongBaoThanhCong = "Chỉnh sửa thành công. Mời tiếp tục chỉnh sửa hoặc quay lại trang danh sách";
+                        header("Location: ?act=list-book");
+                        exit();
                     }
                 }
             }

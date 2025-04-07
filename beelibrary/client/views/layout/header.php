@@ -45,7 +45,7 @@ if (isset($_SESSION['user_name']) && $_SESSION['user_name'] !== null) {
                         </div>
                     <?php endif; ?>
                 </div>
-                <p>Need help? Call us: <a href="tel:024.9999.9999">024.9999.9999</a></p>
+                <p>Need help? Call us: <a href="tel:024.9999.9999" class="fas fa-headset">024.9999.9999</a></p>
             </div>
         </div>
     </div>
@@ -124,16 +124,39 @@ if (isset($_SESSION['user_name']) && $_SESSION['user_name'] !== null) {
                         <form action="<?= BASE_URL ?>index.php" method="GET">
                             <input type="hidden" name="controller" value="Home">
                             <input type="hidden" name="action" value="index">
-                            <input type="text" name="search" placeholder="Tìm kiếm sách..." value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                            <input type="text" name="search" placeholder="Tìm kiếm sách,tác giả..." value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
                             <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
                         </form>
                     </div>
+
                     <div class="cart-info">
-                        <a href="<?= BASE_URL ?>index.php?controller=Cart&action=view">
-                            <i class="fas fa-shopping-cart"></i>
-                        </a>
+                        <?php if (isset($_SESSION['user_id'])): ?>
+                            <!-- Nếu đã đăng nhập -->
+                            <a href="<?= BASE_URL ?>index.php?controller=Cart&action=viewCart">
+                                <i class="fas fa-shopping-cart"></i>
+                            </a>
+                        <?php else: ?>
+                            <!-- Nếu chưa đăng nhập -->
+                            <a href="#" onclick="alert('Bạn cần đăng nhập để xem giỏ hàng!'); return false;">
+                                <i class="fas fa-shopping-cart"></i>
+                            </a>
+                        <?php endif; ?>
                     </div>
                 </div>
+                <div class="order-info">
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <!-- Nếu đã đăng nhập -->
+                        <a href="<?= BASE_URL ?>index.php?controller=Order&action=viewAllOrders">
+                            <i class="fa fa-receipt"></i>
+                        </a>
+                    <?php else: ?>
+                        <!-- Nếu chưa đăng nhập -->
+                        <a href="#" onclick="alert('Bạn cần đăng nhập để xem đơn hàng!'); return false;">
+                            <i class="fa fa-receipt"></i>
+                        </a>
+                    <?php endif; ?>
+                </div>
+
             </nav>
         </div>
     </header>

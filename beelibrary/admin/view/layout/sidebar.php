@@ -66,16 +66,16 @@
               </p>
             </a>
           </li> -->
-          <!-- Bình luận
+          <!-- Bình luận-->
           <li class="nav-item">
             <a href="<?= BASE_URL_ADMIN . '?act=binh-luan' ?>" class="nav-link">
             <i class="fas fa-comments"></i>
               <p>
-                Bình luận
+                 Bình luận
                 <span class="right badge badge-danger">New</span>
               </p>
             </a>
-          </li> -->
+          </li> 
           <!-- Quản lí tài khoản -->
           <li class="nav-item">
             <a href="#" class="nav-link">
