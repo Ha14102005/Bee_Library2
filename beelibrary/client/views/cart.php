@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Cart</title>
     <link rel="stylesheet" href="<?= BASE_URL ?>client/assets/css/stylecart.css">
-    <?php include 'layout/header.php'; ?>
+    <?php
+    require_once __DIR__ . '/../views/layout/header.php';
+    ?>
 </head>
 
 <body>
-    <h1>Your Cart</h1>
+    <h1>Giỏ hàng của bạn</h1>
     <div class="container">
         <?php if (!empty($cart_items)):
             $total_price = 0;
@@ -32,7 +35,7 @@
                         $total_price += $item_total;
                     ?>
                         <tr data-id="<?= $item['id'] ?>">
-                            <td><?= $key + 1?></td>
+                            <td><?= $key + 1 ?></td>
                             <td><img src="<?= BASE_URL_ADMIN . $item['image']; ?>" alt="<?php echo htmlspecialchars($item['title']); ?>" width="50"></td>
                             <td><?= htmlspecialchars($item['title']); ?></td>
                             <td>
@@ -74,84 +77,86 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-$(document).ready(function () {
-    // Xử lý tăng số lượng
-    $('.btn-increase').click(function() {
-        let row = $(this).closest('tr');
-        let input = row.find('.quantity');
-        let currentQty = parseInt(input.val());
-        let newQty = currentQty + 1;
-        updateQuantity(row, newQty);
-    });
-
-    // Xử lý giảm số lượng
-    $('.btn-decrease').click(function() {
-        let row = $(this).closest('tr');
-        let input = row.find('.quantity');
-        let currentQty = parseInt(input.val());
-        if (currentQty > 1) { // Không cho giảm xuống dưới 1
-            let newQty = currentQty - 1;
+    $(document).ready(function() {
+        // Xử lý tăng số lượng
+        $('.btn-increase').click(function() {
+            let row = $(this).closest('tr');
+            let input = row.find('.quantity');
+            let currentQty = parseInt(input.val());
+            let newQty = currentQty + 1;
             updateQuantity(row, newQty);
+        });
+
+        // Xử lý giảm số lượng
+        $('.btn-decrease').click(function() {
+            let row = $(this).closest('tr');
+            let input = row.find('.quantity');
+            let currentQty = parseInt(input.val());
+            if (currentQty > 1) { // Không cho giảm xuống dưới 1
+                let newQty = currentQty - 1;
+                updateQuantity(row, newQty);
+            }
+        });
+
+        // Xử lý xóa sản phẩm
+        $(".btn-remove").click(function(e) {
+            e.preventDefault();
+            var row = $(this).closest("tr");
+            var id = row.data("id");
+
+            $.ajax({
+                url: "index.php?controller=Cart&action=remove",
+                type: "GET",
+                data: {
+                    id: id
+                },
+                success: function(response) {
+                    row.remove();
+                    updateTotalPrice();
+                },
+                error: function() {
+                    alert("Xóa sản phẩm thất bại!");
+                }
+            });
+        });
+
+        // Hàm cập nhật số lượng và giá
+        function updateQuantity(row, newQty) {
+            let id = row.data('id');
+            let price = parseFloat(row.find('.price').text().replace('VNĐ', '').replace(/,/g, ''));
+
+            $.ajax({
+                url: "index.php?controller=Cart&action=update",
+                type: "GET",
+                data: {
+                    id: id,
+                    quantity: newQty
+                },
+                success: function(response) {
+                    row.find('.quantity').val(newQty);
+                    let newItemTotal = price * newQty;
+                    row.find('.item-total').text(numberFormat(newItemTotal) + 'VNĐ');
+                    updateTotalPrice();
+                },
+                error: function() {
+                    alert("Cập nhật số lượng thất bại!");
+                }
+            });
+        }
+
+        // Hàm cập nhật tổng giá
+        function updateTotalPrice() {
+            let total = 0;
+            $('.item-total').each(function() {
+                let itemTotal = parseFloat($(this).text().replace('VNĐ', '').replace(/,/g, ''));
+                total += itemTotal;
+            });
+            $('#total-price').text(numberFormat(total));
+        }
+
+        // Hàm định dạng số
+        function numberFormat(number) {
+            return number.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
         }
     });
-
-    // Xử lý xóa sản phẩm
-    $(".btn-remove").click(function (e) {
-        e.preventDefault();
-        var row = $(this).closest("tr");
-        var id = row.data("id");
-
-        $.ajax({
-            url: "index.php?controller=Cart&action=remove",
-            type: "GET",
-            data: { id: id },
-            success: function (response) {
-                row.remove();
-                updateTotalPrice();
-            },
-            error: function () {
-                alert("Xóa sản phẩm thất bại!");
-            }
-        });
-    });
-
-    // Hàm cập nhật số lượng và giá
-    function updateQuantity(row, newQty) {
-        let id = row.data('id');
-        let price = parseFloat(row.find('.price').text().replace('VNĐ', '').replace(/,/g, ''));
-        
-        $.ajax({
-            url: "index.php?controller=Cart&action=update",
-            type: "GET",
-            data: { 
-                id: id,
-                quantity: newQty 
-            },
-            success: function(response) {
-                row.find('.quantity').val(newQty);
-                let newItemTotal = price * newQty;
-                row.find('.item-total').text(numberFormat(newItemTotal) + 'VNĐ');
-                updateTotalPrice();
-            },
-            error: function() {
-                alert("Cập nhật số lượng thất bại!");
-            }
-        });
-    }
-
-    // Hàm cập nhật tổng giá
-    function updateTotalPrice() {
-        let total = 0;
-        $('.item-total').each(function() {
-            let itemTotal = parseFloat($(this).text().replace('VNĐ', '').replace(/,/g, ''));
-            total += itemTotal;
-        });
-        $('#total-price').text(numberFormat(total));
-    }
-
-    // Hàm định dạng số
-    function numberFormat(number) {
-        return number.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
-    }
-});
 </script>

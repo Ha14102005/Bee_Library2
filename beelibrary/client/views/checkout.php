@@ -1,3 +1,6 @@
+<?php
+require_once __DIR__ . '/../views/layout/header.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,10 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout</title>
     <link rel="stylesheet" href="<?= BASE_URL ?>client/assets/css/stylecheckout.css">
-    <?php include 'layout/header.php'; ?>
 </head>
 <body>
-    <h1>Checkout</h1>
+    <h1>Thanh toán</h1>
     <form action="<?= BASE_URL ?>index.php?controller=Order&action=createOrder" method="POST">
         <label for="recipient_name">Họ và tên:</label>
         <input type="text" name="recipient_name" required>
@@ -28,8 +30,10 @@
             <option value="2">Chuyển khoản ngân hàng</option>
         </select>
 
+
         <button type="submit">Đặt hàng</button>
     </form>
     <?php include 'layout/footer.php'; ?>
 </body>
+
 </html>

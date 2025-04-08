@@ -25,7 +25,7 @@ if (isset($_SESSION['user_name']) && $_SESSION['user_name'] !== null) {
     <div class="notification-bar">
         <div class="container">
             <div class="notification-left">
-                <p>With warranty & free shipping for orders above $78.00</p>
+                <p>Bee Library - Kho tàng sách của bạn</p>
             </div>
             <div class="notification-right">
                 <a href="#" class="wishlist"><i class="fas fa-heart"></i> Wishlist</a>
@@ -34,18 +34,18 @@ if (isset($_SESSION['user_name']) && $_SESSION['user_name'] !== null) {
                         <!-- Nếu đã đăng nhập -->
                         <span class="user"><i class="fas fa-user"></i> <?= htmlspecialchars($_SESSION['user_name'] ?? '', ENT_QUOTES, 'UTF-8') ?></span>
                         <div class="dropdown-menu">
-                            <a href="<?= BASE_URL ?>client/controllers/UserController.php?action=logout">Logout</a>
+                            <a href="<?= BASE_URL ?>client/controllers/UserController.php?action=logout">Đăng xuất</a>
                         </div>
                     <?php else: ?>
                         <!-- Nếu chưa đăng nhập -->
-                        <span class="user"><i class="fas fa-user"></i> Sign in</span>
+                        <span class="user"><i class="fas fa-user"></i>Tài khoản</span>
                         <div class="dropdown-menu">
-                            <a href="<?= BASE_URL ?>client/views/login.php">Login</a>
-                            <a href="<?= BASE_URL ?>client/views/register.php">Register</a>
+                            <a href="<?= BASE_URL ?>client/views/login.php">Đăng nhập</a>
+                            <a href="<?= BASE_URL ?>client/views/register.php">Đăng ký</a>
                         </div>
                     <?php endif; ?>
                 </div>
-                <p>Need help? Call us: <a href="tel:024.9999.9999" class="fas fa-headset">024.9999.9999</a></p>
+                <p>Bạn cần hỗ trợ? Gọi ngay: <a href="tel:024.9999.9999" class="fas fa-headset">024.9999.9999</a></p>
             </div>
         </div>
     </div>
