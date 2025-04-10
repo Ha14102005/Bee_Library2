@@ -25,14 +25,15 @@ $statusMap = array_column($statusList, 'status_name', 'status_id');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chi tiết đơn hàng #<?= htmlspecialchars($order['order_code']) ?></title>
+    <title>Chi tiết đơn hàng></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div class="order-container">
         <!-- Tiêu đề đơn hàng -->
         <div class="order-header">
-            <h2>Chi tiết đơn hàng #<?= htmlspecialchars($order['order_code']) ?></h2>
+            <h2>Chi tiết đơn hàng</h2>
+            <p>Mã đơn hàng: #<?= htmlspecialchars($order['order_code']) ?> </p>
             <p>Ngày đặt hàng: <?= date('d/m/Y H:i:s', strtotime($order['order_date'])) ?></p>
             <p>Trạng thái: <?= htmlspecialchars($statusMap[$order['status_id']] ?? 'Không xác định') ?></p>
         </div>

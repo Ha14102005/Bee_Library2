@@ -17,6 +17,15 @@ class Cart {
         return $stmt->fetch();
     }
 
+    public function getCartItemByBookId($cart_id, $book_id) {
+        $query = "SELECT id, quantity FROM cart_item WHERE cart_id = :cart_id AND book_id = :book_id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':cart_id', $cart_id);
+        $stmt->bindValue(':book_id', $book_id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function createCart($user_id) {
         $query = "INSERT INTO cart (user_id, status, created_at) VALUES (:user_id, 'pending', NOW())";
         $stmt = $this->db->prepare($query);

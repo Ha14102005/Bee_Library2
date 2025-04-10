@@ -18,7 +18,7 @@ class CartController
             header("Location: " . BASE_URL . "index.php?controller=User&action=login");
             exit();
         }
-  
+
         $book_id = $params['book_id'];
         $quantity = $params['quantity'];
         $user_id = $_SESSION['user_id'];
@@ -30,8 +30,19 @@ class CartController
             $cart_id = $this->cartModel->createCart($user_id);
         }
 
-        $this->cartModel->addItemToCart($cart_id, $book_id, $quantity);
+        // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
+        $existing_item = $this->cartModel->getCartItemByBookId($cart_id, $book_id);
+        if ($existing_item) {
+            // Nếu sản phẩm đã tồn tại, tăng số lượng
+            $new_quantity = $existing_item['quantity'] + $quantity;
+            $this->cartModel->updateCartItemQuantity($existing_item['id'], $new_quantity);
+        } else {
+            // Nếu chưa có, thêm mới
+            $this->cartModel->addItemToCart($cart_id, $book_id, $quantity);
+        }
+
         header("Location: " . BASE_URL . "index.php?controller=Cart&action=viewCart");
+        exit();
     }
 
     public function viewCart()
@@ -102,6 +113,41 @@ class CartController
         } else {
             echo json_encode(['success' => false, 'message' => 'Invalid parameters']);
         }
+        exit();
+    }
+
+    public function buyNow()
+    {
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: " . BASE_URL . "index.php?controller=User&action=login");
+            exit();
+        }
+
+        $user_id = $_SESSION['user_id'];
+        $book_id = $_POST['book_id'];
+        $quantity = $_POST['quantity'];
+
+        // Lấy hoặc tạo giỏ hàng
+        $cart = $this->cartModel->getCartByUserId($user_id);
+        if ($cart) {
+            $cart_id = $cart['cart_id'];
+        } else {
+            $cart_id = $this->cartModel->createCart($user_id);
+        }
+
+        // Kiểm tra xem sản phẩm đã có trong giỏ chưa
+        $existing_item = $this->cartModel->getCartItemByBookId($cart_id, $book_id);
+        if ($existing_item) {
+            // Nếu đã có, cập nhật số lượng
+            $new_quantity = $existing_item['quantity'] + $quantity;
+            $this->cartModel->updateCartItemQuantity($existing_item['id'], $new_quantity);
+        } else {
+            // Nếu chưa có, thêm mới
+            $this->cartModel->addItemToCart($cart_id, $book_id, $quantity);
+        }
+
+        // Chuyển thẳng đến trang checkout
+        header("Location: " . BASE_URL . "index.php?controller=Order&action=checkout");
         exit();
     }
 }

@@ -36,9 +36,17 @@ require_once __DIR__ . '/../views/layout/header.php';
 
                     <!-- Form thêm vào giỏ hàng -->
                     <?php if (isset($_SESSION['user_id'])): ?>
-                        <form action="<?= BASE_URL ?>index.php?controller=Cart&action=addToCart&book_id=<?= $book['book_id'] ?>&quantity=1" method="POST">
+                        <!-- Form cho "Thêm vào giỏ hàng" -->
+                        <form action="<?= BASE_URL ?>index.php?controller=Cart&action=addToCart" method="POST" style="display:inline;">
                             <input type="hidden" name="book_id" value="<?= $book['book_id']; ?>">
+                            <input type="hidden" name="quantity" value="1">
                             <button type="submit" name="add_to_cart" class="btn btn-primary">Thêm vào giỏ hàng</button>
+                        </form>
+
+                        <!-- Form cho "Mua ngay" -->
+                        <form action="<?= BASE_URL ?>index.php?controller=Cart&action=buyNow" method="POST" style="display:inline;">
+                            <input type="hidden" name="book_id" value="<?= $book['book_id']; ?>">
+                            <input type="hidden" name="quantity" value="1">
                             <button type="submit" name="buy_now" class="btn btn-danger">Mua ngay</button>
                         </form>
                     <?php else: ?>
